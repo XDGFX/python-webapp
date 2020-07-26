@@ -5,11 +5,11 @@ from threading import Thread
 
 app = Flask(__name__)
 
-socketio = SocketIO(app, async_mode='threading')
+sio = SocketIO(app, async_mode='threading')
 
 # --- INITIALISATION ---
 def serve():
-    socketio.run(app)
+    sio.run(app, host="0.0.0.0")
 
 def start_server():
     thread = Thread(target=serve)
@@ -18,7 +18,7 @@ def start_server():
 
 # --- SEND COMMANDS ---
 def send(event, data):
-    socketio.emit(str(event), {'data': data})
+    sio.emit(str(event), {'data': data})
 
 # --- WEBSERVER ROUTES ---
 @app.route('/')
@@ -26,6 +26,6 @@ def index():
     return render_template('index.html')
 
 # --- WEBSOCKET ROUTES ---
-@socketio.on('my event')
+@sio.on('my event')
 def test_message(message):
     emit('my response', {'data': 'got it!'})
